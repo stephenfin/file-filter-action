@@ -1,0 +1,49 @@
+name: Example Usage
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+
+jobs:
+  file-filter-example:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Filter for Python files
+        id: python-filter
+        uses: ./
+        with:
+          patterns: |
+            **/*.py
+            requirements.txt
+
+      - name: Filter for documentation
+        id: docs-filter
+        uses: ./
+        with:
+          patterns: |
+            **/*.md
+            docs/**
+
+      - name: Run Python checks
+        if: steps.python-filter.outputs.any
+        run: |
+          echo "Python files were changed - would run linting/testing here"
+
+      - name: Run docs checks
+        if: steps.docs-filter.outputs.any
+        run: |
+          echo "Documentation files were changed - would run linting/testing here"
+
+      - name: Show results
+        run: |
+          echo "Python files changed?      ${{ steps.python-filter.outputs.matches }}"
+          echo "Python files count:        ${{ steps.python-filter.outputs.count }}"
+          echo "Python files that matched: ${{ steps.python-filter.outputs.files }}"
+          echo "Docs files changed?        ${{ steps.python-filter.outputs.matches }}"
+          echo "Docs files count:          ${{ steps.python-filter.outputs.count }}"
+          echo "Docs files that matched:   ${{ steps.python-filter.outputs.files }}"

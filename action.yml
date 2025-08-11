@@ -1,0 +1,44 @@
+name: 'File Filter'
+description: 'Filter PR files by glob patterns and return true/false if any files match'
+inputs:
+  patterns:
+    description: 'String containing one or more glob patterns separated by spaces'
+    required: true
+  token:
+    description: 'GitHub token for API access'
+    required: false
+    default: ${{ github.token }}
+  base_ref:
+    description: 'Base reference for comparison (defaults to PR base or main branch)'
+    required: false
+  head_ref:
+    description: 'Head reference for comparison (defaults to PR head or current branch)'
+    required: false
+outputs:
+  matches:
+    description: 'True if any files match the patterns, false otherwise (boolean)'
+    value: ${{ steps.filter.outputs.matches }}
+  count:
+    description: 'Number of files that matched the patterns (integer)'
+    value: ${{ steps.filter.outputs.count }}
+  files:
+    description: 'Files that matched the patterns (JSON array of strings)'
+    value: ${{ steps.filter.outputs.files }}
+runs:
+  using: 'composite'
+  steps:
+    - name: Set inputs
+      run: |
+        echo "INPUT_PATTERNS<<EOF" >> $GITHUB_ENV
+        echo "${{ inputs.patterns }}" >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
+        echo "INPUT_TOKEN=${{ inputs.token }}" >> $GITHUB_ENV
+        echo "INPUT_BASE_REF=${{ inputs.base_ref }}" >> $GITHUB_ENV
+        echo "INPUT_HEAD_REF=${{ inputs.head_ref }}" >> $GITHUB_ENV
+      shell: bash
+    - name: Run script
+      id: filter
+      run: |
+        python3 -m pip install .
+        file-filter
+      shell: bash

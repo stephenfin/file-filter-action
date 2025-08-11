@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "file-filter-action"
+version = "1.0.0"
+description = "GitHub Action to filter PR files by glob patterns"
+readme = "README.md"
+license = "Apache-2.0"
+authors = [
+    {name = "Gophercloud Authors"},
+]
+keywords = ["github-actions", "ci", "cd", "automation", "file-filtering"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Software Distribution",
+    "Private :: Do Not Upload",
+]
+requires-python = ">=3.11"
+dependencies = [
+    "PyGithub~=2.7.0",
+    "requests~=2.32",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest~=8.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/gophercloud/file-filter-action"
+Repository = "https://github.com/gophercloud/file-filter-action"
+Issues = "https://github.com/gophercloud/file-filter-action/issues"
+Documentation = "https://github.com/gophercloud/file-filter-action#readme"
+
+[project.scripts]
+file-filter = "file_filter_action:main"
+
+[tool.setuptools]
+# packages = ["file_filter_action"]
+py-modules = ["file_filter_action"]
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "S", "U"]
+ignore = []
+
+[tool.ruff.lint.per-file-ignores]
+"test_file_filter_action.py" = ["S"]
+
+[tool.ruff.format]
+quote-style = "single"
+skip-magic-trailing-comma = false
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+
+[[tool.mypy.overrides]]
+module = ["test_file_filter_action"]
+ignore_errors = true
