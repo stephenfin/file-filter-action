@@ -17,28 +17,10 @@ inputs:
 outputs:
   matches:
     description: 'True if any files match the patterns, false otherwise (boolean)'
-    value: ${{ steps.filter.outputs.matches }}
   count:
     description: 'Number of files that matched the patterns (integer)'
-    value: ${{ steps.filter.outputs.count }}
   files:
     description: 'Files that matched the patterns (JSON array of strings)'
-    value: ${{ steps.filter.outputs.files }}
 runs:
-  using: 'composite'
-  steps:
-    - name: Set inputs
-      run: |
-        echo "INPUT_PATTERNS<<EOF" >> $GITHUB_ENV
-        echo "${{ inputs.patterns }}" >> $GITHUB_ENV
-        echo "EOF" >> $GITHUB_ENV
-        echo "INPUT_TOKEN=${{ inputs.token }}" >> $GITHUB_ENV
-        echo "INPUT_BASE_REF=${{ inputs.base_ref }}" >> $GITHUB_ENV
-        echo "INPUT_HEAD_REF=${{ inputs.head_ref }}" >> $GITHUB_ENV
-      shell: bash
-    - name: Run script
-      id: filter
-      run: |
-        python3 -m pip install .
-        file-filter
-      shell: bash
+  using: 'docker'
+  image: 'Dockerfile'
