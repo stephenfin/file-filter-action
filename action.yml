@@ -4,6 +4,10 @@ inputs:
   patterns:
     description: 'String containing one or more glob patterns separated by spaces'
     required: true
+  exclude:
+    description: 'Whether patterns is a list of glob patterns to *exclude* rather than *include*'
+    required: false
+    default: false
   token:
     description: 'GitHub token for API access'
     required: false

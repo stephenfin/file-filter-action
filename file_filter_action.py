@@ -66,13 +66,13 @@ def get_changed_files(
         return []
 
 
-def match_files(files: list[str], patterns: list[str]) -> list[str]:
+def match_files(files: list[str], patterns: list[str], exclude: bool) -> list[str]:
     """Match files against glob patterns."""
     matches = []
 
     for file_path in files:
         for pattern in patterns:
-            if fnmatch.fnmatch(file_path, pattern):
+            if (fnmatch.fnmatch(file_path, pattern) and not exclude) or exclude:
                 matches.append(file_path)
                 break
 
@@ -96,6 +96,7 @@ def main() -> None:
         token = os.environ.get('INPUT_TOKEN', os.environ.get('GITHUB_TOKEN', ''))
         base_ref = os.environ.get('INPUT_BASE_REF')
         head_ref = os.environ.get('INPUT_HEAD_REF')
+        exclude = os.environ.get('INPUT_EXCLUDE')
         repo_name = os.environ.get('GITHUB_REPOSITORY', '')
 
         if not patterns_input:
@@ -110,12 +111,16 @@ def main() -> None:
             print('Error: No repository name found', file=sys.stderr)
             sys.exit(1)
 
+        if exclude and exclude not in ('true', 'false'):
+            print('Error: exclude must be one of: true, false', file=sys.stderr)
+            sys.exit(1)
+
         patterns = parse_patterns(patterns_input)
         print(f'Parsed patterns: {patterns}')
 
         github_client = github.Github(token)
         changed_files = get_changed_files(github_client, repo_name, base_ref, head_ref)
-        matched_files = match_files(changed_files, patterns)
+        matched_files = match_files(changed_files, patterns, exclude == 'true')
 
         print(f'Matched files: {matched_files}')
         print(f'Has matches: {bool(matched_files)}')

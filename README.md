@@ -7,6 +7,7 @@ A GitHub Action that filters Pull Request files by glob patterns and returns whe
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
 | `patterns` | Glob patterns to match against (one per line or space-separated) | Yes | - |
+| `exclude` | Whether `patterns` is a list of things to *ignore* | No | `false` |
 | `token` | GitHub token for API access | No | `${{ github.token }}` |
 | `base_ref` | Base reference for comparison | No | PR base or `main` |
 | `head_ref` | Head reference for comparison | No | PR head or current SHA |
